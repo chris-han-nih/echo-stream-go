@@ -1,4 +1,4 @@
-package middleware
+package auth
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"github.com/echo-stream/database/ent"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"sync"
 )
 
@@ -28,9 +29,11 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		if !ok {
 			return echo.ErrUnauthorized
 		}
+		log.Infof("%v", appMap)
 		for k, v := range appMap {
-			if v == clientId {
-				if k.String() == clientSecret {
+			if k.String() == clientId {
+				if v == clientSecret {
+					c.Request().Header.Set("X-Application-Id", k.String())
 					return next(c)
 				}
 			}

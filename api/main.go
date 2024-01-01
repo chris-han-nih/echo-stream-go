@@ -7,6 +7,7 @@ import (
 	"github.com/echo-stream/api/domain/validate"
 	"github.com/echo-stream/api/infrastructure"
 	"github.com/echo-stream/api/infrastructure/repository"
+	"github.com/echo-stream/api/presentation/auth"
 	"github.com/echo-stream/api/presentation/controller"
 	"github.com/echo-stream/database/ent"
 	"github.com/go-playground/validator/v10"
@@ -37,12 +38,16 @@ func main() {
 		fmt.Printf("failed creating schema resources: %v", err)
 	}
 
+	auth.InitAuth(client)
+	//e.Use(auth.Auth)
+
 	sr := repository.NewSlackRepository(client)
 	su := usecase.NewSlackUsecase(*sr)
 	sc := controller.SlackController{
 		SlackUsecase: *su,
 	}
-	e.POST("/sent", sc.Create)
+	private := e.Group("/v1/api", auth.Auth)
+	private.POST("/sent", sc.Create)
 
 	// 서버 시작
 	e.Logger.Fatal(e.Start(":1323"))

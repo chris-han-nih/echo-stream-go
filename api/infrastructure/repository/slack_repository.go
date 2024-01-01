@@ -3,10 +3,9 @@ package repository
 import (
 	"context"
 	"fmt"
-
+	
 	"github.com/echo-stream/api/domain/models"
 	"github.com/echo-stream/database/ent"
-	"github.com/google/uuid"
 )
 
 type SlackRepository struct {
@@ -24,9 +23,9 @@ func (s *SlackRepository) Create(ctx context.Context, m *models.Message) error {
 	if err != nil {
 		return err
 	}
-
+	
 	message, err := tx.SlackMessage.Create().
-		SetApplicationId(uuid.UUID{}).
+		SetApplicationId(m.ApplicationId).
 		SetUserName(m.UserName).
 		SetIconEmoji(m.IconEmoji).
 		SetChannel(m.Channel).
@@ -35,6 +34,7 @@ func (s *SlackRepository) Create(ctx context.Context, m *models.Message) error {
 	if err != nil {
 		return rollback(tx, err)
 	}
+	
 	for _, attachment := range m.Attachments {
 		_, err = tx.SlackMessageAttachment.Create().
 			SetMessageID(message).
@@ -57,12 +57,12 @@ func (s *SlackRepository) Create(ctx context.Context, m *models.Message) error {
 			return rollback(tx, err)
 		}
 	}
-
+	
 	err = tx.Commit()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
