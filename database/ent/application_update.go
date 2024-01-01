@@ -14,6 +14,7 @@ import (
 	"github.com/echo-stream/database/ent/application"
 	"github.com/echo-stream/database/ent/predicate"
 	"github.com/echo-stream/database/ent/user"
+	"github.com/google/uuid"
 )
 
 // ApplicationUpdate is the builder for updating Application entities.
@@ -26,6 +27,20 @@ type ApplicationUpdate struct {
 // Where appends a list predicates to the ApplicationUpdate builder.
 func (au *ApplicationUpdate) Where(ps ...predicate.Application) *ApplicationUpdate {
 	au.mutation.Where(ps...)
+	return au
+}
+
+// SetApplicationId sets the "ApplicationId" field.
+func (au *ApplicationUpdate) SetApplicationId(u uuid.UUID) *ApplicationUpdate {
+	au.mutation.SetApplicationId(u)
+	return au
+}
+
+// SetNillableApplicationId sets the "ApplicationId" field if the given value is not nil.
+func (au *ApplicationUpdate) SetNillableApplicationId(u *uuid.UUID) *ApplicationUpdate {
+	if u != nil {
+		au.SetApplicationId(*u)
+	}
 	return au
 }
 
@@ -184,6 +199,9 @@ func (au *ApplicationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := au.mutation.ApplicationId(); ok {
+		_spec.SetField(application.FieldApplicationId, field.TypeUUID, value)
+	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(application.FieldName, field.TypeString, value)
 	}
@@ -246,6 +264,20 @@ type ApplicationUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ApplicationMutation
+}
+
+// SetApplicationId sets the "ApplicationId" field.
+func (auo *ApplicationUpdateOne) SetApplicationId(u uuid.UUID) *ApplicationUpdateOne {
+	auo.mutation.SetApplicationId(u)
+	return auo
+}
+
+// SetNillableApplicationId sets the "ApplicationId" field if the given value is not nil.
+func (auo *ApplicationUpdateOne) SetNillableApplicationId(u *uuid.UUID) *ApplicationUpdateOne {
+	if u != nil {
+		auo.SetApplicationId(*u)
+	}
+	return auo
 }
 
 // SetName sets the "Name" field.
@@ -432,6 +464,9 @@ func (auo *ApplicationUpdateOne) sqlSave(ctx context.Context) (_node *Applicatio
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := auo.mutation.ApplicationId(); ok {
+		_spec.SetField(application.FieldApplicationId, field.TypeUUID, value)
 	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(application.FieldName, field.TypeString, value)

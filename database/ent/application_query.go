@@ -298,12 +298,12 @@ func (aq *ApplicationQuery) WithUserID(opts ...func(*UserQuery)) *ApplicationQue
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"Name,omitempty"`
+//		ApplicationId uuid.UUID `json:"ApplicationId,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Application.Query().
-//		GroupBy(application.FieldName).
+//		GroupBy(application.FieldApplicationId).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (aq *ApplicationQuery) GroupBy(field string, fields ...string) *ApplicationGroupBy {
@@ -321,11 +321,11 @@ func (aq *ApplicationQuery) GroupBy(field string, fields ...string) *Application
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"Name,omitempty"`
+//		ApplicationId uuid.UUID `json:"ApplicationId,omitempty"`
 //	}
 //
 //	client.Application.Query().
-//		Select(application.FieldName).
+//		Select(application.FieldApplicationId).
 //		Scan(ctx, &v)
 func (aq *ApplicationQuery) Select(fields ...string) *ApplicationSelect {
 	aq.ctx.Fields = append(aq.ctx.Fields, fields...)

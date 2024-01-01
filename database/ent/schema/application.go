@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -15,6 +16,7 @@ type Application struct {
 // Fields of the Application.
 func (Application) Fields() []ent.Field {
 	return []ent.Field{
+		field.UUID("ApplicationId", uuid.UUID{}).Default(uuid.New),
 		field.String("Name").NotEmpty().Unique().MaxLen(30),
 		field.String("Description").NotEmpty(),
 		field.String("Secret").NotEmpty().MaxLen(255),

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/echo-stream/database/ent/application"
 	"github.com/echo-stream/database/ent/user"
+	"github.com/google/uuid"
 )
 
 // Application is the model entity for the Application schema.
@@ -18,6 +19,8 @@ type Application struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// ApplicationId holds the value of the "ApplicationId" field.
+	ApplicationId uuid.UUID `json:"ApplicationId,omitempty"`
 	// Name holds the value of the "Name" field.
 	Name string `json:"Name,omitempty"`
 	// Description holds the value of the "Description" field.
@@ -68,6 +71,8 @@ func (*Application) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case application.FieldCreatedAt, application.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
+		case application.FieldApplicationId:
+			values[i] = new(uuid.UUID)
 		case application.ForeignKeys[0]: // user_id
 			values[i] = new(sql.NullInt64)
 		default:
@@ -91,6 +96,12 @@ func (a *Application) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			a.ID = int(value.Int64)
+		case application.FieldApplicationId:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field ApplicationId", values[i])
+			} else if value != nil {
+				a.ApplicationId = *value
+			}
 		case application.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field Name", values[i])
@@ -169,6 +180,9 @@ func (a *Application) String() string {
 	var builder strings.Builder
 	builder.WriteString("Application(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString("ApplicationId=")
+	builder.WriteString(fmt.Sprintf("%v", a.ApplicationId))
+	builder.WriteString(", ")
 	builder.WriteString("Name=")
 	builder.WriteString(a.Name)
 	builder.WriteString(", ")

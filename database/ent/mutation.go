@@ -40,6 +40,7 @@ type ApplicationMutation struct {
 	op             Op
 	typ            string
 	id             *int
+	_ApplicationId *uuid.UUID
 	_Name          *string
 	_Description   *string
 	_Secret        *string
@@ -149,6 +150,42 @@ func (m *ApplicationMutation) IDs(ctx context.Context) ([]int, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetApplicationId sets the "ApplicationId" field.
+func (m *ApplicationMutation) SetApplicationId(u uuid.UUID) {
+	m._ApplicationId = &u
+}
+
+// ApplicationId returns the value of the "ApplicationId" field in the mutation.
+func (m *ApplicationMutation) ApplicationId() (r uuid.UUID, exists bool) {
+	v := m._ApplicationId
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldApplicationId returns the old "ApplicationId" field's value of the Application entity.
+// If the Application object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ApplicationMutation) OldApplicationId(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldApplicationId is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldApplicationId requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldApplicationId: %w", err)
+	}
+	return oldValue.ApplicationId, nil
+}
+
+// ResetApplicationId resets all changes to the "ApplicationId" field.
+func (m *ApplicationMutation) ResetApplicationId() {
+	m._ApplicationId = nil
 }
 
 // SetName sets the "Name" field.
@@ -404,7 +441,10 @@ func (m *ApplicationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ApplicationMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
+	if m._ApplicationId != nil {
+		fields = append(fields, application.FieldApplicationId)
+	}
 	if m._Name != nil {
 		fields = append(fields, application.FieldName)
 	}
@@ -428,6 +468,8 @@ func (m *ApplicationMutation) Fields() []string {
 // schema.
 func (m *ApplicationMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case application.FieldApplicationId:
+		return m.ApplicationId()
 	case application.FieldName:
 		return m.Name()
 	case application.FieldDescription:
@@ -447,6 +489,8 @@ func (m *ApplicationMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ApplicationMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case application.FieldApplicationId:
+		return m.OldApplicationId(ctx)
 	case application.FieldName:
 		return m.OldName(ctx)
 	case application.FieldDescription:
@@ -466,6 +510,13 @@ func (m *ApplicationMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *ApplicationMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case application.FieldApplicationId:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetApplicationId(v)
+		return nil
 	case application.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -550,6 +601,9 @@ func (m *ApplicationMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ApplicationMutation) ResetField(name string) error {
 	switch name {
+	case application.FieldApplicationId:
+		m.ResetApplicationId()
+		return nil
 	case application.FieldName:
 		m.ResetName()
 		return nil

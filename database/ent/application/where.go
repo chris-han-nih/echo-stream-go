@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/echo-stream/database/ent/predicate"
+	"github.com/google/uuid"
 )
 
 // ID filters vertices based on their ID field.
@@ -55,6 +56,11 @@ func IDLTE(id int) predicate.Application {
 	return predicate.Application(sql.FieldLTE(FieldID, id))
 }
 
+// ApplicationId applies equality check predicate on the "ApplicationId" field. It's identical to ApplicationIdEQ.
+func ApplicationId(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldEQ(FieldApplicationId, v))
+}
+
 // Name applies equality check predicate on the "Name" field. It's identical to NameEQ.
 func Name(v string) predicate.Application {
 	return predicate.Application(sql.FieldEQ(FieldName, v))
@@ -78,6 +84,46 @@ func CreatedAt(v time.Time) predicate.Application {
 // UpdatedAt applies equality check predicate on the "UpdatedAt" field. It's identical to UpdatedAtEQ.
 func UpdatedAt(v time.Time) predicate.Application {
 	return predicate.Application(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// ApplicationIdEQ applies the EQ predicate on the "ApplicationId" field.
+func ApplicationIdEQ(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldEQ(FieldApplicationId, v))
+}
+
+// ApplicationIdNEQ applies the NEQ predicate on the "ApplicationId" field.
+func ApplicationIdNEQ(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldNEQ(FieldApplicationId, v))
+}
+
+// ApplicationIdIn applies the In predicate on the "ApplicationId" field.
+func ApplicationIdIn(vs ...uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldIn(FieldApplicationId, vs...))
+}
+
+// ApplicationIdNotIn applies the NotIn predicate on the "ApplicationId" field.
+func ApplicationIdNotIn(vs ...uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldNotIn(FieldApplicationId, vs...))
+}
+
+// ApplicationIdGT applies the GT predicate on the "ApplicationId" field.
+func ApplicationIdGT(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldGT(FieldApplicationId, v))
+}
+
+// ApplicationIdGTE applies the GTE predicate on the "ApplicationId" field.
+func ApplicationIdGTE(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldGTE(FieldApplicationId, v))
+}
+
+// ApplicationIdLT applies the LT predicate on the "ApplicationId" field.
+func ApplicationIdLT(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldLT(FieldApplicationId, v))
+}
+
+// ApplicationIdLTE applies the LTE predicate on the "ApplicationId" field.
+func ApplicationIdLTE(v uuid.UUID) predicate.Application {
+	return predicate.Application(sql.FieldLTE(FieldApplicationId, v))
 }
 
 // NameEQ applies the EQ predicate on the "Name" field.

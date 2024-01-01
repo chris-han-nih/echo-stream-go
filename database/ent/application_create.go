@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/echo-stream/database/ent/application"
 	"github.com/echo-stream/database/ent/user"
+	"github.com/google/uuid"
 )
 
 // ApplicationCreate is the builder for creating a Application entity.
@@ -19,6 +20,20 @@ type ApplicationCreate struct {
 	config
 	mutation *ApplicationMutation
 	hooks    []Hook
+}
+
+// SetApplicationId sets the "ApplicationId" field.
+func (ac *ApplicationCreate) SetApplicationId(u uuid.UUID) *ApplicationCreate {
+	ac.mutation.SetApplicationId(u)
+	return ac
+}
+
+// SetNillableApplicationId sets the "ApplicationId" field if the given value is not nil.
+func (ac *ApplicationCreate) SetNillableApplicationId(u *uuid.UUID) *ApplicationCreate {
+	if u != nil {
+		ac.SetApplicationId(*u)
+	}
+	return ac
 }
 
 // SetName sets the "Name" field.
@@ -113,6 +128,10 @@ func (ac *ApplicationCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ac *ApplicationCreate) defaults() {
+	if _, ok := ac.mutation.ApplicationId(); !ok {
+		v := application.DefaultApplicationId()
+		ac.mutation.SetApplicationId(v)
+	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		v := application.DefaultCreatedAt()
 		ac.mutation.SetCreatedAt(v)
@@ -125,6 +144,9 @@ func (ac *ApplicationCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ac *ApplicationCreate) check() error {
+	if _, ok := ac.mutation.ApplicationId(); !ok {
+		return &ValidationError{Name: "ApplicationId", err: errors.New(`ent: missing required field "Application.ApplicationId"`)}
+	}
 	if _, ok := ac.mutation.Name(); !ok {
 		return &ValidationError{Name: "Name", err: errors.New(`ent: missing required field "Application.Name"`)}
 	}
@@ -184,6 +206,10 @@ func (ac *ApplicationCreate) createSpec() (*Application, *sqlgraph.CreateSpec) {
 		_node = &Application{config: ac.config}
 		_spec = sqlgraph.NewCreateSpec(application.Table, sqlgraph.NewFieldSpec(application.FieldID, field.TypeInt))
 	)
+	if value, ok := ac.mutation.ApplicationId(); ok {
+		_spec.SetField(application.FieldApplicationId, field.TypeUUID, value)
+		_node.ApplicationId = value
+	}
 	if value, ok := ac.mutation.Name(); ok {
 		_spec.SetField(application.FieldName, field.TypeString, value)
 		_node.Name = value

@@ -11,6 +11,7 @@ var (
 	// ApplicationsColumns holds the columns for the "applications" table.
 	ApplicationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "application_id", Type: field.TypeUUID},
 		{Name: "name", Type: field.TypeString, Unique: true, Size: 30},
 		{Name: "description", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeString, Size: 255},
@@ -26,7 +27,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "applications_users_applications",
-				Columns:    []*schema.Column{ApplicationsColumns[6]},
+				Columns:    []*schema.Column{ApplicationsColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

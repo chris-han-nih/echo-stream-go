@@ -18,8 +18,12 @@ import (
 func init() {
 	applicationFields := schema.Application{}.Fields()
 	_ = applicationFields
+	// applicationDescApplicationId is the schema descriptor for ApplicationId field.
+	applicationDescApplicationId := applicationFields[0].Descriptor()
+	// application.DefaultApplicationId holds the default value on creation for the ApplicationId field.
+	application.DefaultApplicationId = applicationDescApplicationId.Default.(func() uuid.UUID)
 	// applicationDescName is the schema descriptor for Name field.
-	applicationDescName := applicationFields[0].Descriptor()
+	applicationDescName := applicationFields[1].Descriptor()
 	// application.NameValidator is a validator for the "Name" field. It is called by the builders before save.
 	application.NameValidator = func() func(string) error {
 		validators := applicationDescName.Validators
@@ -37,11 +41,11 @@ func init() {
 		}
 	}()
 	// applicationDescDescription is the schema descriptor for Description field.
-	applicationDescDescription := applicationFields[1].Descriptor()
+	applicationDescDescription := applicationFields[2].Descriptor()
 	// application.DescriptionValidator is a validator for the "Description" field. It is called by the builders before save.
 	application.DescriptionValidator = applicationDescDescription.Validators[0].(func(string) error)
 	// applicationDescSecret is the schema descriptor for Secret field.
-	applicationDescSecret := applicationFields[2].Descriptor()
+	applicationDescSecret := applicationFields[3].Descriptor()
 	// application.SecretValidator is a validator for the "Secret" field. It is called by the builders before save.
 	application.SecretValidator = func() func(string) error {
 		validators := applicationDescSecret.Validators
@@ -59,11 +63,11 @@ func init() {
 		}
 	}()
 	// applicationDescCreatedAt is the schema descriptor for CreatedAt field.
-	applicationDescCreatedAt := applicationFields[3].Descriptor()
+	applicationDescCreatedAt := applicationFields[4].Descriptor()
 	// application.DefaultCreatedAt holds the default value on creation for the CreatedAt field.
 	application.DefaultCreatedAt = applicationDescCreatedAt.Default.(func() time.Time)
 	// applicationDescUpdatedAt is the schema descriptor for UpdatedAt field.
-	applicationDescUpdatedAt := applicationFields[4].Descriptor()
+	applicationDescUpdatedAt := applicationFields[5].Descriptor()
 	// application.DefaultUpdatedAt holds the default value on creation for the UpdatedAt field.
 	application.DefaultUpdatedAt = applicationDescUpdatedAt.Default.(func() time.Time)
 	// application.UpdateDefaultUpdatedAt holds the default value on update for the UpdatedAt field.
